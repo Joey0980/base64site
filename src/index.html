@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex">
+    <meta name="darkreader-lock" content="null">
+
+    <meta content="Base64 converter" property="og:title" />
+    <meta content="Tool to transform Base64 completely client side" property="og:description" />
+    <meta content="https://b64.tools.nsmbu.net" property="og:url" />
+    <meta content="#800080" data-react-helmet="true" name="theme-color" />
+    <title>Base64</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.1/css/bootstrap.min.css" integrity="sha512-siwe/oXMhSjGCwLn+scraPOWrJxHlUgMBMZXdPe2Tnk3I0x3ESCoLz7WZ5NTH6SZrywMY+PB1cjyqJ5jAluCOg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.9.1/font/bootstrap-icons.min.css" integrity="sha512-5PV92qsds/16vyYIJo3T/As4m2d8b6oWYfoqV+vtizRB6KhF1F9kYzWzQmsO6T3z3QG2Xdhrx7FQ+5R1LiQdUA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="form-signin">
+    <h1 id="title" class="h3 mb-3 fw-normal">Base64 converter<br>&copy;2023 Joey<br><hr></h1>
+    <div class="checkbox mb-3">
+        <label for="string" style="color: aliceblue">Input:</label> <br>
+        <textarea rows="3" cols="39" id="string"></textarea>
+
+        <input type="radio" id="encode" name="encode" value="encode" checked>
+        <label for="encode" style="color: aliceblue">Encode</label><br>
+        <input type="radio" id="decode" name="encode" value="decode">
+        <label for="decode" style="color: aliceblue">Decode</label><br><br>
+        <input class="w-100 btn btn-lg btn-primary" id="submit" type="submit" value="Convert">
+        <br><br>
+
+        <p class="message"></p>
+        <button class="btn btn-lg btn-primary" id="copy" onclick="copyClip()">Copy</button>
+        <label for="output" class="output" style="color: aliceblue">Output:</label>
+        <textarea rows="5" cols="39" id="output" class="output" readonly></textarea>
+    </div>
+</main>
+<noscript>
+    <div class="alert alert-danger" role="alert">
+        <h4 class="alert-heading">JavaScript is disabled!</h4>
+        <p>This tool requires JavaScript to be enabled to work properly.</p>
+        <hr>
+        <p class="mb-0">Please enable JavaScript and reload the page.</p>
+    </div>
+</noscript>
+<script>
+    function convertBase64() {
+        let input = document.getElementById("string").value;
+        let encodeRadio = document.getElementById("encode");
+        let decodeRadio = document.getElementById("decode");
+        let output = document.getElementById("output");
+        let copyButton = document.getElementById("copy");
+
+        if (encodeRadio.checked) {
+            output.value = btoa(input);
+        } else if (decodeRadio.checked) {
+            output.value = atob(input);
+        }
+
+        copyButton.style.display = "block";
+    }
+
+    let submitButton = document.getElementById("submit");
+    submitButton.addEventListener("click", function () {
+        let warning = document.querySelector(".message");
+        let output = document.getElementById("output")
+        let copy = document.getElementById("copy");
+        if (document.getElementById("string").value === "") {
+            warning.classList.add("red");
+            warning.style.display = "block";
+            warning.innerHTML = "Please enter a string";
+            output.style.display = "none";
+            copy.style.display = "none";
+            output.value = "";
+            return;
+        } else {
+            warning.classList.remove("red");
+            warning.style.display = "none";
+            warning.innerHTML = "";
+        }
+        document.getElementById("output").style.display = "block";
+        convertBase64();
+    });
+
+    let queryString = window.location.search;
+    if (queryString) {
+        let urlParams = new URLSearchParams(queryString);
+        let content = urlParams.get("content");
+        let type = urlParams.get("type");
+
+        if (content) {
+            document.getElementById("string").value = content;
+        }
+
+        if (type === "encode") {
+            document.getElementById("encode").checked = true;
+        } else if (type === "decode") {
+            document.getElementById("decode").checked = true;
+        }
+    }
+
+    function copyClip() {
+        let copyText = document.getElementById("output");
+        copyText.select();
+        copyText.setSelectionRange(0, 99999);
+        if (!navigator.clipboard) {
+            // for older browsers
+            document.execCommand("copy");
+        } else {
+            navigator.clipboard.writeText(copyText.value);
+        }
+    }
+
+</script>
+</body>
+</html>
